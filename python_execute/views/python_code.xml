@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--  Author       :  A & M  -->
+<!--  Copyright(c) :  2024-Present.  -->
+<!--  License      :  LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).  -->
+
+<odoo>
+
+    <record id="python_code_execute_form" model="ir.ui.view">
+        <field name="name">python.code.execute.form</field>
+        <field name="model">python.code.execute</field>
+        <field name="arch" type="xml">
+            <form string="Python Code Execute" create="0" delete="0" copy="0">
+                <header>
+                    <field name="code_state" widget="statusbar" statusbar_visible="draft,done"/>
+                    <button name="action_verify_code" type="object" string="Verify" class="oe_highlight" invisible="code_state == 'done'"/>
+                    <button name="action_execute_code" type="object" invisible="code_state == 'draft'" string="Execute"/>
+                    <button name="action_back_to_draft" type="object" string="Back to Draft" invisible="code_state == 'draft'"/>
+                </header>
+                <sheet>
+                    <h3 class="oe_title mb24">
+                        <field name="code_name" required="1" readonly="code_state == 'done'" default_focus="1" placeholder="e.g. ORM method to archive all contacts."/>
+                    </h3>
+                    <div style="overflow: scroll">
+                        <h2>
+                            <field name="execute_code" placeholder="Code to Execute" required="1" readonly="code_state == 'done'" options="{'mode': 'python'}" widget="ace"/>
+                        </h2>
+                    </div>
+                    <separator string="Result" invisible="not code_result"/>
+                    <field name="code_result" placeholder="Result" readonly="1" invisible="not code_result"/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="python_code_execute_tree" model="ir.ui.view">
+        <field name="name">python.code.execute.tree</field>
+        <field name="model">python.code.execute</field>
+        <field name="arch" type="xml">
+            <tree string="Python Code Execute" duplicate="0" import="0" export_xlsx="0" decoration-muted="code_state == 'draft'" decoration-success="code_state == 'done'">
+                <field name="code_name"/>
+                <field string='Created By' name='create_uid' widget="many2one_avatar"/>
+                <field string='Modified By' name='modified_uid' widget="many2one_avatar"/>
+                <field string='Last Execute On' name='last_execute' widget="datetime"/>
+                <field name="code_state" widget='badge' decoration-muted="code_state == 'draft'" decoration-success="code_state == 'done'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_python_code_execute" model="ir.actions.act_window">
+        <field name="name">Python Code</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">python.code.execute</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Execute Python Codes
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="python_code_execute_root" name="Python Code" parent="base.next_id_9" action="action_python_code_execute"/>
+
+</odoo>
